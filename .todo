@@ -3,4 +3,7 @@
     <note priority="medium" time="1670610438">
         improve day 8... model each direction as a combination of transposition and reflection in 1d... operate once on each version
     </note>
+    <note priority="medium" time="1671178893">
+        test 14 still works
+    </note>
 </todo>
