@@ -1,31 +1,12 @@
+# this one is slow but will eventually work
 PATH = "14/data.txt"
 
+import os
+import sys
 from itertools import chain
 
-
-class Pos:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def __eq__(self, other):
-        return self.x == other.x and self.y == other.y
-
-    def __hash__(self):
-        return (
-            2 ** abs(self.x)
-            * 3 ** (abs(self.y))
-            * 5 ** int(self.x / abs(self.x) + 1)
-            * 7 ** int(self.y / abs(self.y) + 1)
-        )
-
-    def __repr__(self):
-        return f"({self.x}, {self.y})"
-
-    def move(self, x, y):
-        self.x += x
-        self.y += y
-
+sys.path.append(os.path.abspath("."))
+from util import Vect
 
 lines = [
     [[int(z) for z in y.split(",")] for y in x[:-1].split(" -> ")]
@@ -38,21 +19,21 @@ for line in lines:
     for pts in zip(line, line[1:]):
         if pts[0][0] == pts[1][0]:
             for i in range(*[y + i for i, y in enumerate(sorted([x[1] for x in pts]))]):
-                rock.append(Pos(pts[0][0], i))
+                rock.append(Vect(pts[0][0], i))
         else:
             for i in range(*[y + i for i, y in enumerate(sorted([x[0] for x in pts]))]):
-                rock.append(Pos(i, pts[0][1]))
-    rock.append(Pos(*line[-1]))
+                rock.append(Vect(i, pts[0][1]))
+    rock.append(Vect(*line[-1]))
 rock = list(set(rock))
 
-nodes = [Pos(500, 0)]
+nodes = [Vect(500, 0)]
 count = 1
 for i in range(floor - 1):
     nodes = list(
         set(
             filter(
                 lambda x: x not in rock,
-                [Pos(node.x + i, node.y + 1) for i in range(-1, 2) for node in nodes],
+                [Vect(node.x + i, node.y + 1) for i in range(-1, 2) for node in nodes],
             )
         )
     )
