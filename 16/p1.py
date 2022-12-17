@@ -10,7 +10,7 @@ class Node:
         self.linked = None
 
     def __repr__(self):
-        return "({}, flow {}: {})".format(
+        return "{{{}, flow {}: {}}}".format(
             self.id, self.flow, [l.id for l in self.linked]
         )
 
