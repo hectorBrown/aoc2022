@@ -5,6 +5,8 @@ import os
 import sys
 from itertools import chain
 
+from tqdm import tqdm
+
 sys.path.append(os.path.abspath("."))
 from util import Vect
 
@@ -28,6 +30,7 @@ rock = list(set(rock))
 
 nodes = [Vect(500, 0)]
 count = 1
+pbar = tqdm(total=sum([2 * i - 1 for i in range(floor - 1)]))
 for i in range(floor - 1):
     nodes = list(
         set(
@@ -37,6 +40,8 @@ for i in range(floor - 1):
             )
         )
     )
+    pbar.update(2 * i - 1)
     count += len(nodes)
+pbar.close()
 
 print(count)

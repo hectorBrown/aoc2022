@@ -5,6 +5,8 @@ import os
 import sys
 from itertools import chain
 
+from tqdm import tqdm
+
 sys.path.append(os.path.abspath("."))
 from util import Vect
 
@@ -28,6 +30,7 @@ rock = list(set(rock))
 
 stable = False
 count = 0
+pbar = tqdm()
 while not stable:
     count += 1
     sand = Vect(500, 0)
@@ -48,5 +51,7 @@ while not stable:
             sand.move(1, 1)
             moving = True
     rock.append(sand)
+    pbar.update(1)
+pbar.close()
 
 print(count)
