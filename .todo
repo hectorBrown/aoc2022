@@ -1,9 +1,12 @@
 <?xml version="1.0"?>
 <todo version="0.1.20">
+    <note priority="medium" time="1671178893" done="1671294969">
+        test 14 still works
+    </note>
     <note priority="medium" time="1670610438">
         improve day 8... model each direction as a combination of transposition and reflection in 1d... operate once on each version
     </note>
-    <note priority="medium" time="1671178893" done="1671294969">
-        test 14 still works
+    <note priority="medium" time="1671301397">
+        speed up day 15 p2
     </note>
 </todo>
