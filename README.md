@@ -14,3 +14,10 @@
 ## Dependencies
 
 - `tqdm`
+
+All dependencies can be retrieved with poetry:
+
+- `pip install poetry`.
+- Navigate to project folder.
+- `poetry install`.
+- Use the created virtual environment to run all files.
