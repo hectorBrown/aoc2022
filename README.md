@@ -9,7 +9,7 @@
 
 - I recommend completing the problems yourself, there's not much point in solving them with my code.
 - To find a solution, replace `/[x]/data.txt` with your data and run `python [x]/p[1/2].py`, which should output an answer.
-  - Some solutions may take a while to run, if they do, there should be some form of output to indicate that the program is running correctly. 
+  - Some solutions may take a while to run, if they do, there should be some form of output to indicate that the program is running correctly.
 
 ## Dependencies
 
