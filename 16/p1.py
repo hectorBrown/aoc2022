@@ -8,6 +8,7 @@ class Node:
         self.id = id
         self.flow = flow
         self.linked = None
+        self.dists = {id: 0}
 
     def __repr__(self):
         return "{{{}, flow {}: {}}}".format(
@@ -34,4 +35,12 @@ for node in nodes_linked:
     nodes[node] = nodes_linked[node][0]
     nodes[node].add_linked([nodes_linked[i][0] for i in nodes_linked[node][1]])
 
-print(nodes)
+changes = True
+while changes:
+    changes = False
+    for node in nodes:
+        for l in nodes[node].linked:
+            for id in l.dists:
+                if id not in nodes[node].dists:
+                    nodes[node].dists[id] = l.dists[id] + 1
+                    changes = True
