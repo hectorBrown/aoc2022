@@ -37,7 +37,7 @@ def get_routes(start, end):
     return [x[:-1] for x in filter(lambda x: x[-1] == end, active)]
 
 
-def get_paths(pos, time, closed, pbar):
+def get_max_flow(pos, time, closed, pbar):
     options = []
     for c in closed:
         larger_in_route = [
@@ -50,26 +50,20 @@ def get_paths(pos, time, closed, pbar):
     sub_paths = []
     for opt in options:
         if time > len(pos.routes[opt.id][0]) + 2:
-            sub_paths += get_paths(
-                opt,
-                time=time - len(pos.routes[opt.id][0]) - (1 if pos.id == "AA" else 2),
-                closed=list(filter(lambda x: x != opt, closed)),
-                pbar=pbar,
+            sub_paths.append(
+                get_max_flow(
+                    opt,
+                    time=time
+                    - len(pos.routes[opt.id][0])
+                    - (1 if pos.id == "AA" else 2),
+                    closed=list(filter(lambda x: x != opt, closed)),
+                    pbar=pbar,
+                )
             )
     if len(sub_paths) == 0:
-        sub_paths.append([])
         pbar.update(1)
-    return [[pos] + path for path in sub_paths]
-
-
-def get_flow(path, pbar):
-    flow = 0
-    time = 30
-    for prev, node in zip(path, path[1:]):
-        time -= len(prev.routes[node.id][0]) + 2
-        flow += node.flow * (time)
-    pbar.update(1)
-    return flow
+        return (time - 1) * pos.flow
+    return max(sub_paths) + (time - 1) * pos.flow
 
 
 nodes_linked = {
@@ -95,14 +89,13 @@ for id in nodes:
     }
     pbar.update(1)
 
-paths = get_paths(
+max_flow = get_max_flow(
     nodes["AA"],
     time=30,
     closed=list(filter(lambda x: x.flow > 0, [nodes[n] for n in nodes])),
     pbar=pbar,
 )
 
-max_flow = max([get_flow(x, pbar) for x in paths])
 pbar.close()
 
 print(max_flow)
