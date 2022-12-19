@@ -14,9 +14,6 @@ class Node:
     def __eq__(self, other):
         return self.id == other.id
 
-    def __hash__(self):
-        return self.id.__hash__()
-
     def __repr__(self):
         return "{{{}, flow {}: {}}}".format(
             self.id, self.flow, [l.id for l in self.linked]
@@ -36,6 +33,17 @@ def get_routes(start, end):
             )
         )
     return [x[:-1] for x in filter(lambda x: x[-1] == end, active)]
+
+
+def get_paths(pos, time, closed):
+    options = []
+    for c in closed:
+        larger_in_route = [
+            x not in chain.from_iterable(pos.routes[c.id])
+            for x in filter(lambda z: z != c and z.flow > c.flow, closed)
+        ]
+        if all(larger_in_route) or len(larger_in_route) == 0:
+            options.append(c)
 
 
 nodes_linked = {
@@ -58,5 +66,8 @@ for id in nodes:
     nodes[id].routes = {
         x: get_routes(nodes[id], nodes[x]) for x in filter(lambda x: x != id, nodes)
     }
-
-print(nodes)
+get_paths(
+    nodes["AA"],
+    time=0,
+    closed=list(filter(lambda x: x.flow > 0, [nodes[n] for n in nodes])),
+)
