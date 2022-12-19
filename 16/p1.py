@@ -1,7 +1,9 @@
 import re
 from itertools import chain
 
-PATH = "16/ex.txt"
+from tqdm import tqdm
+
+PATH = "16/data.txt"
 
 
 class Node:
@@ -35,7 +37,7 @@ def get_routes(start, end):
     return [x[:-1] for x in filter(lambda x: x[-1] == end, active)]
 
 
-def get_paths(pos, time, closed):
+def get_paths(pos, time, closed, pbar):
     options = []
     for c in closed:
         larger_in_route = [
@@ -44,6 +46,30 @@ def get_paths(pos, time, closed):
         ]
         if all(larger_in_route) or len(larger_in_route) == 0:
             options.append(c)
+
+    sub_paths = []
+    for opt in options:
+        if time > len(pos.routes[opt.id][0]) + 2:
+            sub_paths += get_paths(
+                opt,
+                time=time - len(pos.routes[opt.id][0]) - (1 if pos.id == "AA" else 2),
+                closed=list(filter(lambda x: x != opt, closed)),
+                pbar=pbar,
+            )
+    if len(sub_paths) == 0:
+        sub_paths.append([])
+        pbar.update(1)
+    return [[pos] + path for path in sub_paths]
+
+
+def get_flow(path, pbar):
+    flow = 0
+    time = 30
+    for prev, node in zip(path, path[1:]):
+        time -= len(prev.routes[node.id][0]) + 2
+        flow += node.flow * (time)
+    pbar.update(1)
+    return flow
 
 
 nodes_linked = {
@@ -62,12 +88,21 @@ for node in nodes_linked:
     nodes[node] = nodes_linked[node][0]
     nodes[node].add_linked([nodes_linked[i][0] for i in nodes_linked[node][1]])
 
+pbar = tqdm()
 for id in nodes:
     nodes[id].routes = {
         x: get_routes(nodes[id], nodes[x]) for x in filter(lambda x: x != id, nodes)
     }
-get_paths(
+    pbar.update(1)
+
+paths = get_paths(
     nodes["AA"],
-    time=0,
+    time=30,
     closed=list(filter(lambda x: x.flow > 0, [nodes[n] for n in nodes])),
+    pbar=pbar,
 )
+
+max_flow = max([get_flow(x, pbar) for x in paths])
+pbar.close()
+
+print(max_flow)
