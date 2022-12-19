@@ -1,4 +1,5 @@
 import re
+from itertools import chain
 
 PATH = "16/ex.txt"
 
@@ -8,7 +9,13 @@ class Node:
         self.id = id
         self.flow = flow
         self.linked = None
-        self.dists = {id: 0}
+        self.routes = {}
+
+    def __eq__(self, other):
+        return self.id == other.id
+
+    def __hash__(self):
+        return self.id.__hash__()
 
     def __repr__(self):
         return "{{{}, flow {}: {}}}".format(
@@ -17,6 +24,18 @@ class Node:
 
     def add_linked(self, linked):
         self.linked = linked
+
+
+def get_routes(start, end):
+    active = [[l] for l in start.linked]
+    while end not in [x[-1] for x in active]:
+        active = list(
+            filter(
+                lambda x: x[-1] not in chain.from_iterable([x[:-1] for x in active]),
+                [x + [l] for x in active for l in x[-1].linked],
+            )
+        )
+    return [x[:-1] for x in filter(lambda x: x[-1] == end, active)]
 
 
 nodes_linked = {
@@ -35,12 +54,9 @@ for node in nodes_linked:
     nodes[node] = nodes_linked[node][0]
     nodes[node].add_linked([nodes_linked[i][0] for i in nodes_linked[node][1]])
 
-changes = True
-while changes:
-    changes = False
-    for node in nodes:
-        for l in nodes[node].linked:
-            for id in l.dists:
-                if id not in nodes[node].dists:
-                    nodes[node].dists[id] = l.dists[id] + 1
-                    changes = True
+for id in nodes:
+    nodes[id].routes = {
+        x: get_routes(nodes[id], nodes[x]) for x in filter(lambda x: x != id, nodes)
+    }
+
+print(nodes)
