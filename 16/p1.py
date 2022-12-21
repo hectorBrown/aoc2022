@@ -3,7 +3,7 @@ from itertools import chain
 
 from tqdm import tqdm
 
-PATH = "16/data.txt"
+PATH = "16/ex.txt"
 
 
 class Node:
@@ -23,6 +23,19 @@ class Node:
 
     def add_linked(self, linked):
         self.linked = linked
+
+
+def compare(base, a, b):
+    ts1 = [len(base.routes[a.id][0]) + 2, len(a.routes[b.id][0]) + 2]
+    ts2 = [len(base.routes[b.id][0]) + 2, len(b.routes[a.id][0]) + 2]
+    if sum(ts1) > sum(ts2):
+        return ts1[1] * a.flow > ts2[1] * b.flow + (sum(ts1) - sum(ts2)) * (
+            a.flow + b.flow
+        )
+    else:
+        return ts2[1] * b.flow < ts1[1] * a.flow + (sum(ts2) - sum(ts1)) * (
+            a.flow + b.flow
+        )
 
 
 def get_routes(start, end):
