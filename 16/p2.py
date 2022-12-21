@@ -59,22 +59,26 @@ def get_max_flow(pos, time, arrival, closed, pbar):
         else:
             options = options[int(len(options) / 2) - 1 :]
     for opt in options:
+        new_pos = [pos[i] if i != character else opt for i in range(2)]
         new_arriv = [
             arrival[i] if i != character else len(pos[character].routes[opt.id][0]) + 2
             for i in range(2)
         ]
-        new_pos = [pos[i] if i != character else opt for i in range(2)]
         if time > min(new_arriv):
             arriv_in = [new_arriv[i] - min(new_arriv) for i in range(2)]
-            sub_paths.append(
-                get_max_flow(
-                    new_pos,
-                    time=time - min(new_arriv),
-                    arrival=arriv_in,
-                    closed=list(filter(lambda x: x != opt, closed)),
-                    pbar=pbar,
+            if len(sub_paths) == 0 or sum(
+                [c.flow for c in filter(lambda x: x != opt, closed)]
+                + [c.flow for c in new_pos]
+            ) * (time - min(new_arriv)) > max(sub_paths):
+                sub_paths.append(
+                    get_max_flow(
+                        new_pos,
+                        time=time - min(new_arriv),
+                        arrival=arriv_in,
+                        closed=list(filter(lambda x: x != opt, closed)),
+                        pbar=pbar,
+                    )
                 )
-            )
     if len(sub_paths) == 0:
         pbar.update(1)
         out = pos[character].flow * time
