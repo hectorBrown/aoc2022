@@ -89,13 +89,17 @@ for id in nodes:
     }
     pbar.update(1)
 
-max_flow = get_max_flow(
-    nodes["AA"],
-    time=30,
-    closed=list(filter(lambda x: x.flow > 0, [nodes[n] for n in nodes])),
-    pbar=pbar,
-)
-
-pbar.close()
-
-print(max_flow)
+ids = list(filter(lambda x: nodes[x].flow != 0, nodes))
+time = 30
+moving = True
+flow = 0
+pos = nodes["AA"]
+compare(nodes["AA"], nodes["DD"], nodes["JJ"])
+while moving:
+    print(ids)
+    comparisons = [
+        [None if idi == idj else compare(pos, nodes[idi], nodes[idj]) for idi in ids]
+        for idj in ids
+    ]
+    print("\n".join([str(x) for x in comparisons]))
+    moving = False
