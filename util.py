@@ -19,7 +19,7 @@ class Vect(object):
         elif name == "z":
             return self.pos[2]
         else:
-            super(Vect, self).__getattr__(name)
+            super(Vect, self).__getattr__(name)  # pyright: ignore
 
     def __setattr__(self, name, val):
         if name == "x":
@@ -31,6 +31,7 @@ class Vect(object):
         else:
             super(Vect, self).__setattr__(name, val)
 
+    @staticmethod
     def __get_primes(n):
         low_primes = [2, 3, 5, 7, 11, 13]
         if n <= 6:
